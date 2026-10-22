@@ -11,11 +11,24 @@ from app.models.user_model import User
 # Create tables
 Base.metadata.create_all(bind=engine)
 
+# Ensure a default user exists for uploads
+from app.db.database import SessionLocal
+with SessionLocal() as _db:
+    if not _db.query(User).filter(User.id == 1).first():
+        _db.add(User(id=1, name="Default User", email="default@example.com", active=True))
+        _db.commit()
+
 app = FastAPI(
     title="AI Media Enhancer API",
     version="1.0.0",
-    description="Upload images and get AI-powered analysis using Gemini API"
+    description="Upload images and get AI-powered analysis with Spotify lyric captions"
 )
+
+from app.services.lyrics_matcher_service import lyrics_matcher
+
+@app.on_event("startup")
+def on_startup():
+    lyrics_matcher.initialize()
 
 # Add CORS middleware
 app.add_middleware(

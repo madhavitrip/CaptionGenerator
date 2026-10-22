@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from app.schemas.image_analysis import ImageAnalysis
+from app.schemas.lyrics_schema import MatchedCaption
 
 
 class UploadMediaRequest(BaseModel):
@@ -19,6 +20,7 @@ class MediaResponse(BaseModel):
     title: str
     file_url: str
     analysis: ImageAnalysis | None = None
-    
+    captions: list[MatchedCaption] = []
+
     class Config:
         from_attributes = True
